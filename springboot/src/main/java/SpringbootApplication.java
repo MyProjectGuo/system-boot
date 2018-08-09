@@ -1,8 +1,12 @@
-package com.gqb.springboot;
-
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+/**
+ * 主入口 main
+ * 
+ * @author guoqingbin
+ *
+ */
 @SpringBootApplication
 public class SpringbootApplication {
 

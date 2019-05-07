@@ -7,16 +7,17 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import lombok.extern.slf4j.Slf4j;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-@Slf4j
 public class ServiceHandlerInterceptor implements HandlerInterceptor {
+	
+	private static Logger logger = LoggerFactory.getLogger(ServiceHandlerInterceptor.class);
 
 	@Override
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
@@ -39,7 +40,7 @@ public class ServiceHandlerInterceptor implements HandlerInterceptor {
 
 			// 获取请求参数
 			JSONObject parameterMap = JSON.parseObject(RequestWrapper.getBodyString(request));
-			log.info("[REQUEST]：" + request.getServletPath() + " ，  body：" + parameterMap.toJSONString());
+			logger.info("[REQUEST]：" + request.getServletPath() + " ，  body：" + parameterMap.toJSONString());
 
 		} catch (Exception e) {
 			e.printStackTrace();

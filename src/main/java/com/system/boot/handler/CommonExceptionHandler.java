@@ -24,6 +24,12 @@ public class CommonExceptionHandler {
 
 			return ResponseResult.builder().code(ResponseResultEnum.NOT_FOUND.getCode()).message(e.getMessage()).build();
 		}
+		if (e instanceof org.springframework.web.HttpRequestMethodNotSupportedException) {
+			
+			return ResponseResult.builder().code(ResponseResultEnum.NOT_FOUND.getCode()).message(e.getMessage()).build();
+		}
+		
+		
 		e.printStackTrace();
 		return ResponseResult.builder().code(ResponseResultEnum.EXCEPTION.getCode()).message(ResponseResultEnum.EXCEPTION.getMsg()).build();
 

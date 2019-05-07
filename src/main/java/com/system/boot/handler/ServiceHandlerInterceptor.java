@@ -16,7 +16,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 public class ServiceHandlerInterceptor implements HandlerInterceptor {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(ServiceHandlerInterceptor.class);
 
 	@Override
@@ -40,7 +40,9 @@ public class ServiceHandlerInterceptor implements HandlerInterceptor {
 
 			// 获取请求参数
 			JSONObject parameterMap = JSON.parseObject(RequestWrapper.getBodyString(request));
-			logger.info("[REQUEST]：" + request.getServletPath() + " ，  body：" + parameterMap.toJSONString());
+			if (parameterMap != null) {
+				logger.info("[REQUEST]：" + request.getServletPath() + " ，  body：" + parameterMap.toJSONString());
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();

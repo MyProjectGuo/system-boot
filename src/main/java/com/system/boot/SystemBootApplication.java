@@ -15,23 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @EnableTransactionManagement
 public class SystemBootApplication {
 
-	
-
 	public static void main(String[] args) {
 		SpringApplication.run(SystemBootApplication.class, args);
 	}
-	
+
 	@RequestMapping("/")
-	String index(Map<String, String> map){
-		map.put("hello", "你好啊！");
-		try {
-			throw new Exception();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	String index(Map<String, String> map) {
 		return "/index";
 	}
-	
 
 }

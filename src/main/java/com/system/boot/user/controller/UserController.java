@@ -12,7 +12,7 @@ import com.system.boot.service.IUserDBService;
 import com.system.boot.utils.ResponseResultUtils;
 
 @RestController
-@RequestMapping(value = "/user_admin", method = RequestMethod.POST)
+@RequestMapping(value = "/user_admin1", method = RequestMethod.POST)
 public class UserController {
 
 	@Autowired
@@ -21,6 +21,6 @@ public class UserController {
 	@RequestMapping("/getUserList")
 	public ResponseResult getUserList(HttpServletRequest request) throws Exception {
 
-		return ResponseResultUtils.success(userDBService.getAllUser());
+		return ResponseResultUtils.success(11);
 	}
 }

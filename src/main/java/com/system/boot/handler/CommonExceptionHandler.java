@@ -1,6 +1,9 @@
 package com.system.boot.handler;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,11 +28,10 @@ public class CommonExceptionHandler {
 			return ResponseResult.builder().code(ResponseResultEnum.NOT_FOUND.getCode()).message(e.getMessage()).build();
 		}
 		if (e instanceof org.springframework.web.HttpRequestMethodNotSupportedException) {
-			
+
 			return ResponseResult.builder().code(ResponseResultEnum.NOT_FOUND.getCode()).message(e.getMessage()).build();
 		}
-		
-		
+
 		e.printStackTrace();
 		return ResponseResult.builder().code(ResponseResultEnum.EXCEPTION.getCode()).message(ResponseResultEnum.EXCEPTION.getMsg()).build();
 
@@ -73,7 +75,14 @@ public class CommonExceptionHandler {
 
 	@ExceptionHandler(NoHandlerFoundException.class)
 	@ResponseBody
-	public ResponseResult noHandlerFoundException(NoHandlerFoundException ex) {
+	public ResponseResult noHandlerFoundException(HttpServletRequest request, HttpServletResponse response, NoHandlerFoundException ex) {
+		if (("GET").equalsIgnoreCase(ex.getHttpMethod())) {
+			try {
+				response.sendRedirect("/404.html");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		return ResponseResult.builder().code(404).message(ex.getMessage()).build();
 	}
 

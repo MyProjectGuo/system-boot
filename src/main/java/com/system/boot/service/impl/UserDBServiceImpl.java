@@ -3,11 +3,13 @@ package com.system.boot.service.impl;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import com.system.boot.contral.req.QueryUserRequest;
 import com.system.boot.dao.UserExample;
+import com.system.boot.dao.UserExample.Criteria;
 import com.system.boot.dao.UserMapper;
 import com.system.boot.model.User;
 import com.system.boot.service.IUserDBService;
@@ -30,9 +32,24 @@ public class UserDBServiceImpl implements IUserDBService {
 	}
 
 	@Override
-	public List<User> getAllUser() {
+	public List<User> getAllUser(QueryUserRequest request) {
 		UserExample example = new UserExample();
-		example.createCriteria().andUserStatusEqualTo((byte) 1);
+		Criteria cri = example.createCriteria();
+		//cri.andUserStatusEqualTo((byte) 1);
+		if (StringUtils.isNotBlank(request.getUserName())) {
+			cri.andLoginNameEqualTo(request.getUserName());
+		}
+		if (StringUtils.isNotBlank(request.getMobile())) {
+			cri.andMobileLike("%" + request.getMobile() + "%");
+		}
+
+		if (StringUtils.isNotBlank(request.getStartTime()) && StringUtils.isNotBlank(request.getEndTime())) {
+			
+			
+			
+
+		}
+
 		List<User> list = userMapper.selectByExample(example);
 		return CollectionUtils.isEmpty(list) ? null : list;
 	}

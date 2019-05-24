@@ -2,6 +2,7 @@ package com.system.boot.service;
 
 import java.util.List;
 
+import com.system.boot.contral.req.QueryUserRequest;
 import com.system.boot.model.User;
 
 public interface IUserDBService {
@@ -10,6 +11,6 @@ public interface IUserDBService {
 	
 	boolean deleteUserById(Long userId);
 	
-	List<User> getAllUser();
+	List<User> getAllUser(QueryUserRequest request);
 
 }

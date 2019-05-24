@@ -16,7 +16,7 @@ public class InterceptorConfig extends WebMvcConfigurationSupport {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
-		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
-		super.addResourceHandlers(registry);
+		registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/").addResourceLocations("classpath:/templates/");
+		//super.addResourceHandlers(registry);
 	}
 }

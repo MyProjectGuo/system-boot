@@ -14,5 +14,8 @@ public interface IUserDBService {
 	QueryUserAdminResponse getAllUser(QueryUserRequest request);
 	
 	boolean updateUserInfo(UpdateUserRequest request);
+	
+	User getUserByMobile(String mobile);
+	
 
 }

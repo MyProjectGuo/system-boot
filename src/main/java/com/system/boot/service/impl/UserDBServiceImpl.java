@@ -125,4 +125,15 @@ public class UserDBServiceImpl implements IUserDBService {
 
 	}
 
+	@Override
+	public User getUserByMobile(String mobile) {
+		UserExample example = new UserExample();
+		Criteria cri = example.createCriteria();
+		cri.andMobileEqualTo(mobile);
+		List<User> list = userMapper.selectByExample(example);
+		return CollectionUtils.isNotEmpty(list) ? list.get(0) : null;
+	}
+
+	
+	
 }

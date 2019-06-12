@@ -19,7 +19,8 @@ public class ServiceFilter implements Filter {
 		// 防止流读取一次后就没有了, 所以需要将流继续写出去
 		HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
 		ServletRequest requestWrapper = new RequestWrapper(httpServletRequest);
-
+		requestWrapper.setCharacterEncoding("UTF-8");
+		servletResponse.setCharacterEncoding("UTF-8");
 		filterChain.doFilter(requestWrapper, servletResponse);
 	}
 

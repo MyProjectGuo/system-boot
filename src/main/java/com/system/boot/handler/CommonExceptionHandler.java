@@ -76,13 +76,7 @@ public class CommonExceptionHandler {
 	@ExceptionHandler(NoHandlerFoundException.class)
 	@ResponseBody
 	public ResponseResult noHandlerFoundException(HttpServletRequest request, HttpServletResponse response, NoHandlerFoundException ex) {
-		if (("GET").equalsIgnoreCase(ex.getHttpMethod())) {
-			try {
-				response.sendRedirect("/404.html");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		
 		return ResponseResult.builder().code(404).message(ex.getMessage()).build();
 	}
 

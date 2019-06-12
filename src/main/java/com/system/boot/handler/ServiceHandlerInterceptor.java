@@ -41,7 +41,7 @@ public class ServiceHandlerInterceptor implements HandlerInterceptor {
 			// 获取请求参数
 			JSONObject parameterMap = JSON.parseObject(RequestWrapper.getBodyString(request));
 			if (parameterMap != null) {
-				logger.info("[REQUEST]：" + request.getServletPath() + " ，  body：" + parameterMap.toJSONString());
+				logger.info("[REQUEST]：" + request.getServletPath() + " ，  body：" + parameterMap);
 			}
 
 		} catch (Exception e) {

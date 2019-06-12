@@ -1,8 +1,8 @@
 package com.system.boot.service;
 
-import java.util.List;
-
 import com.system.boot.contral.req.QueryUserRequest;
+import com.system.boot.contral.req.UpdateUserRequest;
+import com.system.boot.contral.resp.QueryUserAdminResponse;
 import com.system.boot.model.User;
 
 public interface IUserDBService {
@@ -11,6 +11,8 @@ public interface IUserDBService {
 	
 	boolean deleteUserById(Long userId);
 	
-	List<User> getAllUser(QueryUserRequest request);
+	QueryUserAdminResponse getAllUser(QueryUserRequest request);
+	
+	boolean updateUserInfo(UpdateUserRequest request);
 
 }

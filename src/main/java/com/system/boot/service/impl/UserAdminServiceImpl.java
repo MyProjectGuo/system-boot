@@ -1,6 +1,8 @@
 package com.system.boot.service.impl;
 
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -19,6 +21,7 @@ import com.system.boot.model.User;
 import com.system.boot.service.IUserAdminService;
 import com.system.boot.service.IUserDBService;
 import com.system.boot.utils.Constants;
+import com.system.boot.utils.SystemConstants;
 
 @Service("userAdminService")
 public class UserAdminServiceImpl implements IUserAdminService {
@@ -30,6 +33,8 @@ public class UserAdminServiceImpl implements IUserAdminService {
 	@Qualifier("stringRedisTemplate")
 	private StringRedisTemplate template;
 
+	ExecutorService exec = Executors.newCachedThreadPool();
+	
 	@Override
 	public UserLoginResponse login(UserAdminLoginRequest request) {
 
@@ -56,8 +61,21 @@ public class UserAdminServiceImpl implements IUserAdminService {
 
 	@Override
 	public boolean loginOut(UserLoginOutRequest request) {
+		exec.execute(new Runnable() {
+			@Override
+			public void run() {
+				String userToken = template.opsForValue().get(request.getLoginToken());
+				User user = JSONObject.parseObject(userToken, User.class);
+				if (user == null) {
+					template.delete(SystemConstants.MENU_TOKEN_KEY_ALL);
+				} else {
+					template.delete(SystemConstants.MENU_TOKEN_KEY_USERID + user.getId());
+				}
+				template.delete(request.getLoginToken());
+			}
+		});
 
-		return template.delete(request.getLoginToken());
+		return true;
 
 	}
 

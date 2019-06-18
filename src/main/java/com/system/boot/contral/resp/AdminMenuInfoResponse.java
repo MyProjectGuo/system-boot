@@ -1,14 +1,13 @@
 package com.system.boot.contral.resp;
 
 import java.io.Serializable;
-import java.util.List;
 
 import lombok.Data;
 
 @Data
-public class UserAdminMenuResponse implements Serializable {
+public class AdminMenuInfoResponse implements Serializable {
 
-	private static final long serialVersionUID = 1324485947507642816L;
+	private static final long serialVersionUID = -4319009264365558350L;
 
 	private Long menuId;
 
@@ -20,12 +19,16 @@ public class UserAdminMenuResponse implements Serializable {
 
 	private String url;
 
+	private Integer sortNumber;
+	
 	private Long parentMenu;
-
-	private List<SubMenus> menus;
+	
+	private ParenterMenu parenterMenu;
+	
+	
 
 	@Data
-	public static class SubMenus {
+	public static class ParenterMenu {
 
 		private Long menuId;
 
@@ -36,7 +39,6 @@ public class UserAdminMenuResponse implements Serializable {
 		private String hasThird;
 
 		private String url;
-		private Long parentMenu;
 
 	}
 

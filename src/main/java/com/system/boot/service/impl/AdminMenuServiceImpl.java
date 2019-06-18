@@ -1,7 +1,11 @@
 package com.system.boot.service.impl;
 
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -12,13 +16,18 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.system.boot.contral.req.UpdateMenuInfoRequest;
+import com.system.boot.contral.resp.AdminMenuInfoResponse;
+import com.system.boot.contral.resp.AdminMenuInfoResponse.ParenterMenu;
 import com.system.boot.contral.resp.UserAdminMenuResponse;
 import com.system.boot.dao.MenuExample;
 import com.system.boot.dao.MenuExample.Criteria;
 import com.system.boot.dao.MenuMapper;
+import com.system.boot.handler.ServiceException;
 import com.system.boot.model.Menu;
 import com.system.boot.model.User;
 import com.system.boot.service.IAdminMenuService;
+import com.system.boot.utils.Constants;
 import com.system.boot.utils.SystemConstants;
 
 @Service("adminMenuService")
@@ -31,6 +40,9 @@ public class AdminMenuServiceImpl implements IAdminMenuService {
 	@Qualifier("stringRedisTemplate")
 	private StringRedisTemplate template;
 
+	
+	ExecutorService exec = Executors.newCachedThreadPool();
+	
 	@Override
 	public List<UserAdminMenuResponse> queryAdminMenuByUser(User user) {
 
@@ -60,6 +72,7 @@ public class AdminMenuServiceImpl implements IAdminMenuService {
 				userMenu.setMenuName(menu.getMenuName());
 				userMenu.setMenus(null);
 				userMenu.setUrl(null);
+				userMenu.setParentMenu(menu.getParentMenu());
 
 				// 遍历查询子菜单
 				List<Menu> subMenuList = querySubMenuByParentId(menu.getId());
@@ -74,6 +87,7 @@ public class AdminMenuServiceImpl implements IAdminMenuService {
 						sub.setMenuId(subMenu.getId());
 						sub.setMenuName(subMenu.getMenuName());
 						sub.setUrl(subMenu.getUrl());
+						sub.setParentMenu(subMenu.getParentMenu());
 						subList.add(sub);
 					}
 
@@ -125,6 +139,84 @@ public class AdminMenuServiceImpl implements IAdminMenuService {
 
 		return menuList;
 
+	}
+
+	@Override
+	public AdminMenuInfoResponse querySubMenuById(Long id) {
+		MenuExample example = new MenuExample();
+		Criteria cri = example.createCriteria();
+		cri.andIdEqualTo(id);
+		Menu menu = menuMapper.selectByPrimaryKey(id);
+		if (menu == null) {
+			throw new ServiceException(Integer.valueOf(Constants.NO_FOUND.getCode()), Constants.NO_FOUND.getMsg());
+		}
+		AdminMenuInfoResponse response = new AdminMenuInfoResponse();
+		response.setHasThird(menu.getHasthird());
+		response.setIcon(menu.getIcon());
+		response.setMenuId(id);
+		response.setMenuName(menu.getMenuName());
+		response.setUrl(menu.getUrl());
+		response.setSortNumber(menu.getSortNumber());
+		response.setParentMenu(menu.getParentMenu());
+		if (menu.getParentMenu().longValue() != 0) {
+
+			Menu parenterMenu = menuMapper.selectByPrimaryKey(menu.getParentMenu());
+			ParenterMenu pm = new ParenterMenu();
+			pm.setHasThird(parenterMenu.getHasthird());
+			pm.setIcon(parenterMenu.getIcon());
+			pm.setMenuId(parenterMenu.getId());
+			pm.setMenuName(parenterMenu.getMenuName());
+			pm.setUrl(parenterMenu.getUrl());
+			response.setParenterMenu(pm);
+
+		}
+
+		return response;
+	}
+
+	@Override
+	public List<Menu> queryParentMenu() {
+		MenuExample example = new MenuExample();
+		Criteria cri = example.createCriteria();
+		cri.andParentMenuEqualTo(0L).andDeletedEqualTo((short) 0);
+		List<Menu> list = menuMapper.selectByExample(example);
+		return CollectionUtils.isNotEmpty(list) ? list : null;
+	}
+
+	@Override
+	public boolean updateMenuByInfo(UpdateMenuInfoRequest request) {
+		Menu menu = getMenuById(request.getMenuId());
+		if (menu == null) {
+			return false;
+		}
+		MenuExample example = new MenuExample();
+		Criteria cri = example.createCriteria();
+		cri.andIdEqualTo(menu.getId());
+		if (request.getDeleted().shortValue() == 1) {
+			menu.setDeleted((short) 1);
+		} else {
+			menu.setUpdatedTime(System.currentTimeMillis());
+			menu.setIcon(request.getIcon());
+			menu.setMenuName(URLDecoder.decode(request.getMenuName()));
+			menu.setParentMenu(request.getParentMenu());
+			menu.setSortNumber(request.getSortNumber());
+			menu.setUrl(URLDecoder.decode(request.getUrl()));
+		}
+		
+		/*exec.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				
+				
+			}
+		}); */
+		return menuMapper.updateByExampleSelective(menu, example) > 0;
+	}
+
+	private Menu getMenuById(Long id) {
+
+		return menuMapper.selectByPrimaryKey(id);
 	}
 
 }

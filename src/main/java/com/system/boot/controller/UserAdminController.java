@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.system.boot.contral.req.QueryUserRequest;
 import com.system.boot.contral.req.UpdateMenuInfoRequest;
 import com.system.boot.contral.req.UpdateUserRequest;
@@ -42,6 +44,10 @@ public class UserAdminController {
 	private IUserAdminService userAdminService;
 	@Autowired
 	private IAdminMenuService adminMenuService;
+	@Autowired
+	private HazelcastInstance hazelcastInstance;
+	
+	
 
 	@LoginRequired
 	@RequestMapping(value = "user_admin/list", consumes = "application/json;charset=UTF-8", produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
@@ -104,4 +110,15 @@ public class UserAdminController {
 		return ResponseResultUtils.success(adminMenuService.updateMenuByInfo(request));
 
 	}
+	@RequestMapping(value = {"test/hazelcastInstance"}, produces = "application/json;charset=UTF-8", method = RequestMethod.POST)
+	public ResponseResult hazelcastInstance( HttpServletRequest req) {
+		
+		 IMap<Object, Object>  map = hazelcastInstance.getMap("my-map");
+		map.put("111", "测试");
+		
+		return ResponseResultUtils.success(map.get("111"));
+		
+	}
+	
+	
 }
